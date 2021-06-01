@@ -119,10 +119,59 @@ class UI {
       let total = 0;
 
       if(this.itemList.length > 0){
-        
+        total = this.itemList.reduce(function(acc, curr){ //using reduce function for callback function on expense
+          console.log(`Total is ${acc} and the current value is ${curr.amount}`);
+          acc += curr.amount; //acc is for itemID title curr is for amount value 
+          return acc;
+        }, 0);
       }
       this.expenseAmount.textContent = total;
       return total;
+    }
+
+    //edit expense
+    editExpense(element){ //passing the element to parentElement 
+      let id = parseInt(element.dataset.id) // creating id for dataset of id
+      // console.log(element.dataset.id); 
+      let parent = element.parentElement.parentElement.parentElement; //
+      
+      console.log(element.parentElement.parentElement.parentElement);
+      //remove from dom
+      this.expenseList.removeChild(parent)
+      //remove from the list
+      let expense = this.itemList.filter(function(item){ // the new array finding the item id that has function
+        return item.id == id; // if item.id is equal to id where we edited which is going to return
+      })
+      //show value 
+      this.expenseInput.value = expense[0].title; //value of the expense input is equal to the expense object 1st item title
+      this.amountInput.value = expense[0].amount; //value of the amount input is equal to the expense object 1st item amount
+      //remove from list
+      let tempList = this.itemList.filter(function(item){
+        return item.id !== id; //return if item id is not equal to the id and store in templist
+      })
+      this.itemList = tempList;
+      this.showBalance(); 
+    }
+    //delete expense
+    deleteExpense(element){ //passing the element to parentElement
+      let id = parseInt(element.dataset.id) // creating id for dataset of id
+      // console.log(element.dataset.id); 
+      let parent = element.parentElement.parentElement.parentElement; //
+      //remove from the dom
+      this.expenseList.removeChild(parent)
+      //remove from the list
+      let expense = this.itemList.filter(function(item){ // the new array finding the item id that has function
+        return item.id == id; // if item.id is equal to id where we edited which is going to return
+      })
+      //show value 
+      this.expenseInput.value = expense[0].title; //value of the expense input is equal to the expense object 1st item title
+      this.amountInput.value = expense[0].amount; //value of the amount input is equal to the expense object 1st item amount
+      //remove from list
+      let tempList = this.itemList.filter(function(item){
+        return item.id !== id; //return if item id is not equal to the id and store in templist
+      })
+      this.itemList = tempList;
+      this.showBalance();
 
     }
 }
@@ -153,7 +202,16 @@ function eventListeners(){
   })
   
   //expense click
-  expenseList.addEventListener("click", function(){
+  expenseList.addEventListener("click", function(event){
+    console.log(event.target);
+    if(event.target.parentElement.classList.contains('edit-icon')){ //getting the dom class edit-icon, parentElement is the link of class
+      ui.editExpense(event.target.parentElement) // creating a editExpense method for the parentElement
+
+    }
+    else if(event.target.parentElement.classList.contains('delete-icon')){
+      ui.deleteExpense(event.target.parentElement)
+
+    }
 
   })
 }
